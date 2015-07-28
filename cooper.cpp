@@ -1,5 +1,7 @@
 #include <iostream>
+#include <fstream>
 #include <vector>
+#include <string>
 #include <opencv2/opencv.hpp>
 #include <cmath>
 
@@ -62,15 +64,28 @@ vector<double> getNoveltyScores(const vector<int>& times, double K,
 	return scores;
 }
 
-int main(void)
+int main(int argc, char* argv[])
 {
+	vector<string> names;
 	vector<int> times;
-	for (int i = 0; i < 10; i++)
-		times.push_back(i);
-	for (int i = 10; i < 100; i += 10)
-		times.push_back(i);
-	for (int i = 100; i < 120; i += 2)
-		times.push_back(i);
+
+	if (argc < 2)
+		return -1;
+
+	fstream file(argv[1]);
+
+	if (!file)
+		return -1;
+
+	while (true) {
+		string name;
+		int time;
+		file >> name >> time;
+		if (file.eof())
+			break;
+		names.push_back(name);
+		times.push_back(time);
+	}
 
 	vector<double> scores = getNoveltyScores(times, 1, 4, 1);
 
