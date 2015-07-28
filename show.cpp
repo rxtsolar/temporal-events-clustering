@@ -9,11 +9,14 @@ using namespace std;
 using namespace cv;
 
 vector<string> names;
-vector<unsigned int> times;
+//vector<unsigned int> times;
+vector<double> times;
 int scale = 1;
 int shift = 0;
-unsigned int minimum = UINT_MAX;
-unsigned int maximum = 0;
+//unsigned int minimum = UINT_MAX;
+//unsigned int maximum = 0;
+double minimum = DBL_MAX;
+double maximum = 0;
 
 void plot1(int, void*)
 {
@@ -25,7 +28,7 @@ void plot1(int, void*)
 	double rate = (double)(image.cols - 2 * margin) / (maximum - minimum);
 
 	for (int i = 0; i < times.size(); i++) {
-		int x = margin + rate * scale * (times[i] - minimum);
+		x = margin + rate * scale * (times[i] - minimum);
 		x -= (double)(scale - 1) * (image.cols - 2 * margin) * shift / 100;
 		circle(image, Point(x, y), 2, CV_RGB(255, 255, 0));
 	}
@@ -43,7 +46,8 @@ void plot2(void)
 		x = margin + i * (image.cols - 2 * margin) / times.size();
 		y = image.rows - margin - (double)(image.rows - 2 * margin) *
 			(times[i] - minimum) / (maximum - minimum);
-		circle(image, Point(x, y), 2, CV_RGB(255, 255, 0));
+		//circle(image, Point(x, y), 2, CV_RGB(255, 255, 0));
+		line(image, Point(x, y), Point(x, image.rows - margin), CV_RGB(255, 255, 0));
 	}
 	imshow("plot2", image);
 }
@@ -60,7 +64,7 @@ int main(int argc, char* argv[])
 
 	while (true) {
 		string name;
-		int time;
+		double time;
 		file >> name >> time;
 		if (file.eof())
 			break;
