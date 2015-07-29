@@ -11,8 +11,10 @@ using namespace cv;
 vector<string> names;
 //vector<unsigned int> times;
 vector<double> times;
-int scale = 1;
-int shift = 0;
+int scale1 = 1;
+int shift1 = 0;
+int scale2 = 1;
+int shift2 = 0;
 //unsigned int minimum = UINT_MAX;
 //unsigned int maximum = 0;
 double minimum = DBL_MAX;
@@ -28,14 +30,14 @@ void plot1(int, void*)
 	double rate = (double)(image.cols - 2 * margin) / (maximum - minimum);
 
 	for (int i = 0; i < times.size(); i++) {
-		x = margin + rate * scale * (times[i] - minimum);
-		x -= (double)(scale - 1) * (image.cols - 2 * margin) * shift / 100;
+		x = margin + rate * scale1 * (times[i] - minimum);
+		x -= (double)(scale1 - 1) * (image.cols - 2 * margin) * shift1 / 100;
 		circle(image, Point(x, y), 2, CV_RGB(255, 255, 0));
 	}
 	imshow("plot1", image);
 }
 
-void plot2(void)
+void plot2(int, void*)
 {
 	Mat image = Mat::zeros(768, 1024, CV_8UC3);
 	int margin = image.cols / 20;
@@ -43,7 +45,8 @@ void plot2(void)
 	int y;
 
 	for (int i = 0; i < times.size(); i++) {
-		x = margin + i * (image.cols - 2 * margin) / times.size();
+		x = margin + i * scale2 * (image.cols - 2 * margin) / times.size();
+		x -= (double)(scale2 - 1) * (image.cols - 2 * margin) * shift2 / 100;
 		y = image.rows - margin - (double)(image.rows - 2 * margin) *
 			(times[i] - minimum) / (maximum - minimum);
 		//circle(image, Point(x, y), 2, CV_RGB(255, 255, 0));
@@ -81,10 +84,12 @@ int main(int argc, char* argv[])
 
 	namedWindow("plot1");
 	namedWindow("plot2");
-	createTrackbar("scale", "plot1", &scale, 100, plot1);
-	createTrackbar("shift", "plot1", &shift, 100, plot1);
+	createTrackbar("scale1", "plot1", &scale1, 100, plot1);
+	createTrackbar("shift1", "plot1", &shift1, 100, plot1);
+	createTrackbar("scale2", "plot2", &scale2, 100, plot2);
+	createTrackbar("shift2", "plot2", &shift2, 100, plot2);
 	plot1(0, 0);
-	plot2();
+	plot2(0, 0);
 	while (waitKey() != 27);
 
 	return 0;
