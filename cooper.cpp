@@ -64,6 +64,25 @@ vector<double> getNoveltyScores(const vector<int>& times, double K,
 	return scores;
 }
 
+vector<double> getPeaks(const vector<double>& scores)
+{
+	vector<double> result;
+	Mat s(scores);
+	Mat d;
+	Mat kernel(3, 1, CV_64F);
+	//Mat gaussian = getGaussianKernel(kernelSize, kernelSigma);
+	kernel.at<double>(0, 0) = -1;
+	kernel.at<double>(1, 0) = 2;
+	kernel.at<double>(2, 0) = -1;
+	//kernel = kernel.mul(gaussian);
+	s = s.mul(1000);
+	filter2D(s, d, -1, kernel, Point(-1, -1), 0, BORDER_REPLICATE);
+	for (int i = 0; i < scores.size(); i++) {
+		result.push_back(d.at<double>(i, 0));
+	}
+	return result;
+}
+
 int main(int argc, char* argv[])
 {
 	vector<string> names;
@@ -88,9 +107,12 @@ int main(int argc, char* argv[])
 	}
 
 	vector<double> scores = getNoveltyScores(times, 1, 4, 1);
+	vector<double> peaks = getPeaks(scores);
 
 	for (int i = 0; i < scores.size(); i++) {
-		cout << times[i] << ' ' << scores[i] << endl;
+		//cout << names[i] << ' ' << peaks[i] << endl;
+		//if (peaks[i] > 200)
+			cout << names[i] << ' ' << scores[i] << ' ' << peaks[i] << endl;
 	}
 	return 0;
 }
