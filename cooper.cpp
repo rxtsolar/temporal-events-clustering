@@ -18,6 +18,8 @@ int shift1 = 0;
 int scale2 = 1;
 int shift2 = 0;
 int KK = 10000;
+int kSize = 2;
+int kSigma = 1;
 double minimum = DBL_MAX;
 double maximum = 0;
 
@@ -123,7 +125,7 @@ void plot2(int, void*)
 	int x;
 	int y;
 
-	vector<double> scores = getNoveltyScores(times, KK, 4, 1);
+	vector<double> scores = getNoveltyScores(times, KK, 2 * (kSize + 1), 1.0 / (0.000000001 + kSigma));
 	data = scores;
 	//vector<double> peaks = getPeaks(scores);
 
@@ -153,6 +155,8 @@ void draw(void)
 {
 	namedWindow("plot2");
 	createTrackbar("K", "plot2", &KK, 100000, plot2);
+	createTrackbar("kSize", "plot2", &kSize, 10, plot2);
+	createTrackbar("kSigma", "plot2", &kSigma, 1000, plot2);
 	createTrackbar("scale2", "plot2", &scale2, 100, plot2);
 	createTrackbar("shift2", "plot2", &shift2, 100, plot2);
 	plot2(0, 0);
