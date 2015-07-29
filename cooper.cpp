@@ -85,6 +85,7 @@ vector<double> getPeaks(const vector<double>& scores)
 
 int main(int argc, char* argv[])
 {
+	vector<bool> labels;
 	vector<string> names;
 	vector<int> times;
 
@@ -97,11 +98,13 @@ int main(int argc, char* argv[])
 		return -1;
 
 	while (true) {
+		bool label;
 		string name;
 		int time;
-		file >> name >> time;
+		file >> label >> name >> time;
 		if (file.eof())
 			break;
+		labels.push_back(label);
 		names.push_back(name);
 		times.push_back(time);
 	}
@@ -110,9 +113,9 @@ int main(int argc, char* argv[])
 	vector<double> peaks = getPeaks(scores);
 
 	for (int i = 0; i < scores.size(); i++) {
-		//cout << names[i] << ' ' << peaks[i] << endl;
+		cout << labels[i] << ' ' << names[i] << ' ' << scores[i] << endl;
 		//if (peaks[i] > 200)
-			cout << names[i] << ' ' << scores[i] << ' ' << peaks[i] << endl;
+		//cout << names[i] << ' ' << scores[i] << ' ' << peaks[i] << endl;
 	}
 	return 0;
 }
