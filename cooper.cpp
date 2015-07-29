@@ -125,7 +125,7 @@ void plot2(int, void*)
 	int x;
 	int y;
 
-	vector<double> scores = getNoveltyScores(times, KK, 2 * (kSize + 1), 1.0 / (0.000000001 + kSigma));
+	vector<double> scores = getNoveltyScores(times, KK, 2 * (kSize + 1), kSigma);
 	data = scores;
 	//vector<double> peaks = getPeaks(scores);
 
