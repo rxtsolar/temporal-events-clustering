@@ -2,6 +2,7 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <cstdlib>
 #include <opencv2/opencv.hpp>
 
 #include "feature.h"
@@ -11,11 +12,13 @@ using namespace cv;
 
 int main(int argc, char* argv[])
 {
-	if (argc < 3)
+	if (argc < 5)
 		return -1;
 
 	fstream file(argv[1]);
 	string model(argv[2]);
+	double C = atof(argv[3]);
+	double gamma = atof(argv[4]);
 
 	if (!file)
 		return -1;
@@ -43,6 +46,8 @@ int main(int argc, char* argv[])
 	params.svm_type = CvSVM::C_SVC;
 	params.kernel_type = CvSVM::RBF;
 	params.term_crit = cvTermCriteria(CV_TERMCRIT_ITER, 100, 1e-6);
+	params.C = C;
+	params.gamma = gamma;
 
 	CvSVM svm;
 	svm.train(trainingData, Mat(labels), Mat(), Mat(), params);

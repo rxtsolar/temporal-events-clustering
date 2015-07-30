@@ -1,0 +1,13 @@
+#!/bin/bash
+
+C=0.001;
+
+for i in $(seq 10); do
+	gamma=0.00000001;
+	for j in $(seq 10); do
+		m=$(./validate $C $gamma)
+		echo $m >> output/log
+		gamma=$(bc <<< "$gamma * 10");
+	done;
+	C=$(bc <<< "$C * 10");
+done;
