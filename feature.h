@@ -59,14 +59,35 @@ static vector<double> getNoveltyScores(const vector<int>& times, double K,
 	return scores;
 }
 
+static Mat getNeighbors(const vector<double>& scores, int n)
+{
+	Mat features;
+	for (int i = 0; i < scores.size(); i++) {
+		vector<double> f;
+		for (int j = -n; j <= n; j++) {
+			int k = i + j;
+			if (k < 0)
+				k = 0;
+			if (k >= scores.size())
+				k = scores.size() - 1;
+			f.push_back(scores[k]);
+		}
+		if (features.empty())
+			features = Mat(f).t();
+		else
+			vconcat(features, Mat(f).t(), features);
+	}
+	return features;
+}
+
 Mat getFeatures(const vector<int>& times)
 {
-	/*int nK = 10;*/
-	/*int nSize = 4;*/
-	/*int nSigma = 4;*/
-	int nK = 2;
-	int nSize = 1;
-	int nSigma = 1;
+	int nK = 10;
+	int nSize = 4;
+	int nSigma = 4;
+	/*int nK = 3;*/
+	/*int nSize = 1;*/
+	/*int nSigma = 1;*/
 	double K;
 	int size;
 	double sigma;
@@ -80,7 +101,7 @@ Mat getFeatures(const vector<int>& times)
 				size = 2 * (1 + sz);
 				sigma = 0.5 * sigma + 1;
 				scores = getNoveltyScores(times, K, size, sigma);
-				Mat f(scores);
+				Mat f = getNeighbors(scores, 3);
 				if (features.empty())
 					features = f;
 				else
