@@ -1,0 +1,13 @@
+#!/bin/bash
+
+err=0;
+
+for i in $(seq 4); do
+	./train "data/data_train_$i" "model/model_$i";
+	./test "data/data_test_$i" "model/model_$i" > "output/result_test_$i";
+	e=$(diff -U 0 "data/data_test_$i" "output/result_test_$i" | grep -v ^@ | wc -l);
+	e=$((($e - 2) / 2));
+	err=$(($err + $e));
+done;
+
+echo $err;

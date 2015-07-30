@@ -11,10 +11,11 @@ using namespace cv;
 
 int main(int argc, char* argv[])
 {
-	if (argc < 2)
+	if (argc < 3)
 		return -1;
 
 	fstream file(argv[1]);
+	string model(argv[2]);
 
 	if (!file)
 		return -1;
@@ -38,7 +39,7 @@ int main(int argc, char* argv[])
 	Mat testingData = getFeatures(times);
 
 	CvSVM svm;
-	svm.load("model.xml");
+	svm.load(model.c_str());
 
 	for (int i = 0; i < testingData.rows; i++) {
 		cout << svm.predict(testingData.row(i)) << ' ';
