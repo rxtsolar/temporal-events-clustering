@@ -9,7 +9,7 @@
 using namespace std;
 using namespace cv;
 
-Mat getSimilarityMatrix(const vector<int>& times, double K)
+static Mat getSimilarityMatrix(const vector<int>& times, double K)
 {
 	Mat S(times.size(), times.size(), CV_64F);
 
@@ -22,7 +22,7 @@ Mat getSimilarityMatrix(const vector<int>& times, double K)
 	return S;
 }
 
-Mat getKernel(int size, double sigma)
+static Mat getKernel(int size, double sigma)
 {
 	Mat kernel(size, size, CV_64F);
 	Mat gaussian = getGaussianKernel(size, sigma);
@@ -42,7 +42,7 @@ Mat getKernel(int size, double sigma)
 	return kernel;
 }
 
-vector<double> getNoveltyScores(const vector<int>& times, double K,
+static vector<double> getNoveltyScores(const vector<int>& times, double K,
 		int kernelSize, double kernelSigma)
 {
 	vector<double> scores(times.size());
@@ -57,6 +57,40 @@ vector<double> getNoveltyScores(const vector<int>& times, double K,
 	}
 
 	return scores;
+}
+
+Mat getFeatures(const vector<int>& times)
+{
+	/*int nK = 10;*/
+	/*int nSize = 4;*/
+	/*int nSigma = 4;*/
+	int nK = 2;
+	int nSize = 1;
+	int nSigma = 1;
+	double K;
+	int size;
+	double sigma;
+
+	Mat features;
+	vector<double> scores;
+	for (int k = 0; k < nK; k++) {
+		for (int sz = 0; sz < nSize; sz++) {
+			for (int sg = 0; sg < nSigma; sg++) {
+				K = 10000.0 * (1 + k);
+				size = 2 * (1 + sz);
+				sigma = 0.5 * sigma + 1;
+				scores = getNoveltyScores(times, K, size, sigma);
+				Mat f(scores);
+				if (features.empty())
+					features = f;
+				else
+					hconcat(features, f, features);
+			}
+		}
+	}
+	features.convertTo(features, CV_32F);
+
+	return features;
 }
 
 #endif

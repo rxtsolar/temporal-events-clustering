@@ -35,35 +35,7 @@ int main(int argc, char* argv[])
 		times.push_back(time);
 	}
 
-	// feature params
-	int nK = 1;
-	int nSize = 1;
-	int nSigma = 1;
-	//int nK = 10;
-	//int nSize = 4;
-	//int nSigma = 4;
-	double K;
-	int size;
-	double sigma;
-
-	Mat trainingData;
-	vector<double> scores;
-	for (int k = 0; k < nK; k++) {
-		for (int sz = 0; sz < nSize; sz++) {
-			for (int sg = 0; sg < nSigma; sg++) {
-				K = 10000.0 * (1 + k);
-				size = 2 * (1 + sz);
-				sigma = 0.5 * sigma + 1;
-				scores = getNoveltyScores(times, K, size, sigma);
-				Mat f(scores);
-				if (trainingData.empty())
-					trainingData = f;
-				else
-					vconcat(trainingData, f, trainingData);
-			}
-		}
-	}
-	trainingData.convertTo(trainingData, CV_32F);
+	Mat trainingData = getFeatures(times);
 
 	// svm params
 	CvSVMParams params;
