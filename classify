@@ -1,0 +1,16 @@
+#!/bin/bash
+
+class=0;
+
+./parse "$1" | sort -k2 -n > "output/data_$$";
+./test "output/data_$$" "model/model.xml" > "output/result_$$";
+cat "output/result_$$" | while read -r l n t; do
+	if [ $l -eq 1 ]; then
+		$class=$(($class + 1));
+		mkdir "$2/$class";
+	elif [ $class -eq 0 ]; then
+		$class=1;
+		mkdir "$2/$class";
+	fi;
+	cp "$1/$n" "$2/$class";
+done;
