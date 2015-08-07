@@ -2,6 +2,8 @@
 
 C=0.001;
 
+mkdir -p output;
+
 for i in $(seq 10); do
 	gamma=0.00000001;
 	for j in $(seq 10); do

@@ -2,6 +2,8 @@
 
 err=0;
 
+mkdir -p output;
+
 for i in $(seq 4); do
 	./train "data/data_train_$i" "model/model_$i" "$1" "$2";
 	./test "data/data_test_$i" "model/model_$i" > "output/result_test_$i";

@@ -2,6 +2,8 @@
 
 class=0;
 
+mkdir -p output;
+
 ./parse "$1" | sort -k2 -n > "output/data_$$";
 ./test "output/data_$$" "model/model.xml" > "output/result_$$";
 cat "output/result_$$" | while read -r l n t; do
