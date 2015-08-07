@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# take C and gamma as arguments
+# get cross validation result from the training model with the C and gamma
+
+[ "$1" == '' -o "$2" == '' ] && echo "usage: $0 <C> <gamma>" && exit;
+
 err=0;
 
 mkdir -p output;

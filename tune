@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# tune SVM parameters to get optimized result with cross validation
+# try 10 C and 10 gamma, result will be saved to output/log
+
 C=0.001;
 
 mkdir -p output;

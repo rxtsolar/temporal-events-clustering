@@ -11,8 +11,10 @@ using namespace cv;
 
 int main(int argc, char* argv[])
 {
-	if (argc < 3)
+	if (argc < 3) {
+		cerr << "usage: " << argv[0] << " <parsed-data> <model-to-use>" << endl;
 		return -1;
+	}
 
 	fstream file(argv[1]);
 	string model(argv[2]);

@@ -12,8 +12,11 @@ using namespace cv;
 
 int main(int argc, char* argv[])
 {
-	if (argc < 5)
+	if (argc < 5) {
+		cerr << "usage: " << argv[0] << " <labeled-data> <model-to-save> ";
+		cerr << "<SVM-C> <SVM-gamma>" << endl;
 		return -1;
+	}
 
 	fstream file(argv[1]);
 	string model(argv[2]);

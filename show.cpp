@@ -62,8 +62,10 @@ void plot2(int, void*)
 
 int main(int argc, char* argv[])
 {
-	if (argc < 2)
+	if (argc < 2) {
+		cerr << "usage: " << argv[0] << " <labeled-data>" << endl;
 		return -1;
+	}
 
 	fstream file(argv[1]);
 

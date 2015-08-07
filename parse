@@ -1,3 +1,9 @@
 #!/bin/bash
 
+# take a photo directory as argument, output the photo time info to stdout
+# output format will be <label> <name> <timestamp>
+# label is 2 by default, it can be flagged manually for training purpose
+
+[ "$1" == '' ] && echo "usage: $0 <photo-dir>" && exit;
+
 exiv2 -g Exif.Image.DateTime -Pv $1/* | sed "s/:/\n/g3; s/:/-/g; s/\n/:/g" | while read -r n d t; do echo -n "2" $(basename $n); echo -n " "; date +%s -d"$d $t"; done;

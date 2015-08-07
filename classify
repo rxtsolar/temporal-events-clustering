@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# main user interface
+# analyze the photos in input directory and classify them by events and
+# copy them to the output directory
+
+[ "$1" == '' -o "$2" == '' ] && echo "usage: $0 <input-dir> <output-dir>" && exit;
+
 class=0;
 
 mkdir -p output;
