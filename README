@@ -1,0 +1,37 @@
+This program is to cluster photos by their timestamps.
+
+(This program is only tested in Linux enviroment with some application
+dependencies..)
+
+With the feature mentioned in the referenced paper, the clustering problem
+became a boundary classification problem. If the feature of a photo is large,
+the photo is likely to be the first one in an event.
+
+There are several binary executable and scripts.
+
+* show will plot the data by timestamp.
+* process will plot the feature (novelty score) of the given data.
+* parse will take a directory name as input and output the formatted data to
+  stdout.
+* validate will take SVM parameters C and gamma as input, cross validate 4
+  groups of data in data directory and output the number of mis-labeled photos.
+* tune will run validate with different C and gamma and output the result to
+  output/log. The we can get the best pair of C and gamma from the sorted
+  result.
+* train and test are by their names--training and testing data set.
+
+In data directory there is parsed data from my cell phone--1516 photos. The
+original data is divided to four train-test group. All the data is labeled
+according to iPhone's photo moments.
+
+In model directory there is a trained model from data/data_origin with
+C = 1000 and gamma = 0.00001, which was the best parameter from tuning output.
+
+
+!! Please note when labeling data, leave the very beginning photo as 0 though it
+is the first photo of the first event.
+
+
+
+reference:
+https://www.fxpal.com/publications/temporal-event-clustering-for-digital-photo-collections.pdf
