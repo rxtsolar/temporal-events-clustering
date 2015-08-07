@@ -53,7 +53,6 @@ void plot2(int, void*)
 
 	vector<double> scores = getNoveltyScores(times, KK, 2 * (kSize + 1), kSigma);
 	data = scores;
-	//vector<double> peaks = getPeaks(scores);
 
 	for (int i = 0; i < data.size(); i++) {
 		if (minimum > data[i])
