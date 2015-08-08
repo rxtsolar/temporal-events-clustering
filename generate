@@ -1,8 +1,0 @@
-#!/bin/bash
-
-[ "$1" == '' -o "$2" == '' ] && echo "usage: $0 <input-dir> <output-dir>" && exit;
-
-for f in $(ls "$1"); do
-	./a.out "$1/$f" "$2/$f.JPG";
-	cp "$1/$f" "$2/$f";
-done;

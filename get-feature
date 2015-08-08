@@ -1,0 +1,10 @@
+#!/bin/bash
+
+[ "$1" == '' ] && echo "usage: <input-dir>" && exit;
+
+for dir in $(ls "$1"); do
+	for f in $(ls "$1/$dir"); do
+		echo -n "$dir $f ";
+		./get-c-feature "$1/$dir/$f";
+	done;
+done;

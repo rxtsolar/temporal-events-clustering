@@ -48,21 +48,16 @@ Mat getHistImage(const Mat& histogram)
 int main(int argc, char* argv[])
 {
 	if (argc < 2) {
-		cerr << "usage: " << argv[0] << " <input-image> <output-hist>" << endl;
+		cerr << "usage: " << argv[0] << " <input-image>" << endl;
 		return -1;
 	}
 
 	Mat image = imread(argv[1], 1);
 	Mat hist = getHistogram(image);
-	cerr << hist.rows << ' ' << hist.cols << endl;
-	Mat histImage = getHistImage(hist);
-	imwrite(argv[2], histImage);
-	//Mat fImage;
-	//image.convertTo(fImage, CV_32F, 1.0/255);
-	//Mat dctImage;
-	//dct(fImage, dctImage);
-	//imshow("image", image);
-	//imshow("dct", dctImage);
-	//while (waitKey(1000) != 27);
+	hist = hist / (image.rows * image.cols);
+	cout << hist.rows;
+	for (int i = 0; i < hist.rows; i++)
+		cout << ' ' << hist.at<float>(i);
+	cout << endl;
 	return 0;
 }
