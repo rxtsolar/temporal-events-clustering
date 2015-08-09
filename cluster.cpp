@@ -1,51 +1,46 @@
+#include <iostream>
+#include <fstream>
+
 #include "feature.h"
 
 using namespace std;
 using namespace cv;
 
-static Mat getSimilarityMatrix(const Mat& features, double K)
+int main(int argc, char* argv[])
 {
-	int n = features.rows;
-	Mat S(n, n, CV_64F);
-	
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; j++) {
-			double d = norm(features.row(i) - features.row(j));
-			S.at<double>(i, j) = exp(-d / K);
+	if (argc < 2)
+		return -1;
+
+	fstream file(argv[1]);
+
+	if (!file)
+		return -1;
+
+	vector<string> names;
+	Mat features;
+	Mat labels;
+
+	while (true) {
+		string name;
+		int n;
+		double f;
+		vector<double> feature;
+
+		file >> name >> n;
+		if (file.eof())
+			break;
+		for (int i = 0; i < n; i++) {
+			file >> f;
+			feature.push_back(f);
 		}
+
+		if (features.empty())
+			features = Mat(feature).t();
+		else
+			vconcat(features, Mat(feature).t(), features);
 	}
 
-	return S;
-}
+	labels = spectralClustering(features);
 
-static Mat getLaplacianMatrix(const Mat& features, double K)
-{
-	int n = features.rows;
-	Mat S = getSimilarityMatrix(features, K);
-	Mat D(n, n, CV_64FC1);
-	Mat L;
-
-	for (int i = 0; i < n; i++)
-		D.at<double>(i, i) = sum(S.row(i))[0];
-	pow(D, -0.5, D);
-
-	L = Mat::eye(n, n, CV_64F) - D * S * D;
-
-	return L;
-}
-
-Mat spectralClustering(const Mat& features)
-{
-	Mat labels;
-	Mat eigenValues;
-	Mat eigenVectors;
-	Mat laplacian = getLaplacianMatrix(features, 2);
-
-	eigen(laplacian, eigenValues, eigenVectors);
-	cerr << eigenValues << endl;
-	kmeans(eigenVectors, 2, labels,
-			TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 1000, 1e-5),
-			2, KMEANS_RANDOM_CENTERS);
-
-	return labels;
+	return 0;
 }
