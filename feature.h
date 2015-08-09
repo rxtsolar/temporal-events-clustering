@@ -8,4 +8,6 @@ std::vector<double> getNoveltyScores(const std::vector<int>& times, double K,
 		int kernelSize, double kernelSigma);
 cv::Mat getFeatures(const std::vector<int>& times);
 
+cv::Mat spectralClustering(const cv::Mat& features);
+
 #endif
