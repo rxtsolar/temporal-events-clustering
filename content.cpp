@@ -138,11 +138,14 @@ Mat getGistFeatures(const Mat& big)
 int countFaces(const Mat& image)
 {
 	vector<Rect> faces;
-	Mat rotation = image;
+	Mat rotation;
 	int number = 0;
 
 	CascadeClassifier classifier;
 	classifier.load(path);
+
+	cvtColor(image, rotation, CV_BGR2GRAY);
+	equalizeHist(rotation, rotation);
 
 	classifier.detectMultiScale(rotation, faces);
 	number = faces.size();
