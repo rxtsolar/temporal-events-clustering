@@ -15,6 +15,8 @@ static Mat getSimilarityMatrix(const Mat& features, double K)
 		}
 	}
 
+	cerr << S << endl << endl;
+
 	return S;
 }
 
@@ -27,28 +29,42 @@ static Mat getLaplacianMatrix(const Mat& features, double K)
 
 	for (int i = 0; i < n; i++)
 		D.at<double>(0, i) = sum(S.row(i))[0];
-	pow(D, -0.5, D);
+	//pow(D, -0.5, D);
+	pow(D, -1, D);
 	D = Mat::diag(D);
 
-	L = Mat::eye(n, n, CV_64F) - D * S * D;
+	//L = Mat::eye(n, n, CV_64F) - D * S * D;
+	L = Mat::eye(n, n, CV_64F) - D * S;
+
+	cerr << L << endl << endl;
 
 	return L;
 }
 
-Mat spectralClustering(const Mat& features)
+Mat spectralClustering(const Mat& features, double K, double thresh)
 {
 	Mat labels;
 	Mat eigenValues;
 	Mat eigenVectors;
-	Mat laplacian = getLaplacianMatrix(features, 2);
-
+	Mat laplacian = getLaplacianMatrix(features, K);
+	int k = 0;
 
 	eigen(laplacian, eigenValues, eigenVectors);
 	eigenVectors.convertTo(eigenVectors, CV_32F);
 
 	cerr << eigenValues << endl;
 
-	kmeans(eigenVectors, 2, labels,
+	for (int i = eigenValues.rows - 1; i >= 0; i--) {
+		if (eigenValues.at<double>(i, 0) > thresh)
+			break;
+		k++;
+	}
+
+	cerr << "k = " << k << endl;
+
+	eigenVectors = eigenVectors.rowRange(eigenVectors.rows - k, eigenVectors.rows).t();
+
+	kmeans(eigenVectors, k, labels,
 			TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 1000, 1e-5),
 			2, KMEANS_RANDOM_CENTERS);
 

@@ -34,13 +34,17 @@ int main(int argc, char* argv[])
 			feature.push_back(f);
 		}
 
+		names.push_back(name);
 		if (features.empty())
 			features = Mat(feature).t();
 		else
 			vconcat(features, Mat(feature).t(), features);
 	}
 
-	labels = spectralClustering(features);
+	labels = spectralClustering(features, 1, 0.9);
+
+	for (int i = 0; i < names.size(); i++)
+		cout << labels.at<int>(i, 0) << ' ' << names[i] << endl;
 
 	return 0;
 }

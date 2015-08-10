@@ -10,6 +10,6 @@ cv::Mat getFeatures(const std::vector<int>& times);
 cv::Mat getHistogram(const cv::Mat& image);
 cv::Mat getHistImage(const cv::Mat& histogram);
 
-cv::Mat spectralClustering(const cv::Mat& features);
+cv::Mat spectralClustering(const cv::Mat& features, double K, double thresh);
 
 #endif
