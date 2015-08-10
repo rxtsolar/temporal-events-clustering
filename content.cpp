@@ -49,8 +49,37 @@ Mat getHistImage(const Mat& histogram)
 	return histImage;
 }
 
-Mat getDCTHist(const Mat& image)
+Mat getDCTHist(const Mat& big)
 {
+	vector<Mat> channels;
+	int bSize = 8;
+	int w = big.cols / bSize;
+	int h = big.rows / bSize;
+	vector<double> features(bSize * bSize * channels.size(), 0.0);
+	Mat image = big;
+	Mat result;
+
+	while (image.rows * image.cols > 500000)
+		pyrDown(image, image, Size(image.cols / 2, image.rows / 2));
+
+	split(image, channels);
+
+	for (int c = 0; c < channels.size(); c++) {
+		for (int i = 0; i < h; i++) {
+			for (int j = 0; j < w; j++) {
+				Mat roi(channels[c], Rect(Point(j * w, i * h), Size(bSize, bSize)));
+				Mat dctImage;
+				dct(roi, dctImage);
+				for (int k = 0; k < features.size(); k++) {
+					features[c * bSize * bSize + k] += dctImage.at<double>(k / bSize, k % bSize);
+				}
+			}
+		}
+	}
+
+	result = Mat(features);
+	result /= w * h;
+	return result;
 }
 
 Mat getGistFeatures(const Mat& big)
