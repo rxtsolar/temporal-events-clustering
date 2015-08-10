@@ -18,12 +18,19 @@ int main(int argc, char* argv[])
 	Mat image = imread(argv[1], 1);
 
 	//pyrDown(image, image, Size(image.cols / 2, image.rows / 2));
+	
+	Mat gist = getGistFeatures(image);
 
-	Mat hist = getHistogram(image);
-	hist = hist / (image.rows * image.cols);
-	cout << hist.rows;
-	for (int i = 0; i < hist.rows; i++)
-		cout << ' ' << hist.at<float>(i);
+	cout << gist.rows;
+	for (int i = 0; i < gist.rows; i++)
+		cout << ' ' << gist.at<double>(i);
 	cout << endl;
+
+	//Mat hist = getHistogram(image);
+	//hist = hist / (image.rows * image.cols);
+	//cout << hist.rows;
+	//for (int i = 0; i < hist.rows; i++)
+		//cout << ' ' << hist.at<float>(i);
+	//cout << endl;
 	return 0;
 }
