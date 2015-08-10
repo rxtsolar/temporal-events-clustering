@@ -3,7 +3,7 @@
 using namespace std;
 using namespace cv;
 
-static Mat getSimilarityMatrix(const Mat& features, double K)
+static Mat getSimilarityMatrix(const Mat& features, double K, double thresh)
 {
 	int n = features.rows;
 	Mat S(n, n, CV_64F, Scalar(0.0));
@@ -11,7 +11,10 @@ static Mat getSimilarityMatrix(const Mat& features, double K)
 	for (int i = 0; i < n; i++) {
 		for (int j = 0; j < n; j++) {
 			double d = norm(features.row(i) - features.row(j));
-			S.at<double>(i, j) = exp(-d / K);
+			d = exp(-d / K);
+			if (d < thresh)
+				d = 0;
+			S.at<double>(i, j) = d;
 		}
 	}
 
@@ -20,10 +23,10 @@ static Mat getSimilarityMatrix(const Mat& features, double K)
 	return S;
 }
 
-static Mat getLaplacianMatrix(const Mat& features, double K)
+static Mat getLaplacianMatrix(const Mat& features, double K, double thresh)
 {
 	int n = features.rows;
-	Mat S = getSimilarityMatrix(features, K);
+	Mat S = getSimilarityMatrix(features, K, thresh);
 	Mat D(1, n, CV_64F, Scalar(0.0));
 	Mat L;
 
@@ -46,7 +49,7 @@ Mat spectralClustering(const Mat& features, double K, double thresh)
 	Mat labels;
 	Mat eigenValues;
 	Mat eigenVectors;
-	Mat laplacian = getLaplacianMatrix(features, K);
+	Mat laplacian = getLaplacianMatrix(features, K, thresh);
 	int k = 0;
 
 	eigen(laplacian, eigenValues, eigenVectors);
@@ -55,9 +58,8 @@ Mat spectralClustering(const Mat& features, double K, double thresh)
 	cerr << eigenValues << endl;
 
 	for (int i = eigenValues.rows - 1; i >= 0; i--) {
-		if (eigenValues.at<double>(i, 0) > thresh)
-			break;
-		k++;
+		if (abs(eigenValues.at<double>(i, 0)) < 1e-5)
+			k++;
 	}
 
 	cerr << "k = " << k << endl;

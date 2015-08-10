@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
 			vconcat(features, Mat(feature).t(), features);
 	}
 
-	labels = spectralClustering(features, 1, 0.9);
+	labels = spectralClustering(features, 0.2, 0.3);
 
 	for (int i = 0; i < names.size(); i++)
 		cout << labels.at<int>(i, 0) << ' ' << names[i] << endl;
