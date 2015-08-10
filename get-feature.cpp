@@ -16,6 +16,9 @@ int main(int argc, char* argv[])
 	}
 
 	Mat image = imread(argv[1], 1);
+
+	//pyrDown(image, image, Size(image.cols / 2, image.rows / 2));
+
 	Mat hist = getHistogram(image);
 	hist = hist / (image.rows * image.cols);
 	cout << hist.rows;

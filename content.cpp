@@ -9,6 +9,8 @@ using namespace std;
 using namespace cv;
 
 int histSize = 16;
+//const char* path = "model/haarcascade_frontalface_default.xml";
+const char* path = "model/lbpcascade_profileface.xml";
 
 Mat getHistogram(const Mat& image)
 {
@@ -45,4 +47,25 @@ Mat getHistImage(const Mat& histogram)
 	}
 
 	return histImage;
+}
+
+int countFaces(const Mat& image)
+{
+	vector<Rect> faces;
+	Mat rotation = image;
+	int number = 0;
+
+	CascadeClassifier classifier;
+	classifier.load(path);
+
+	classifier.detectMultiScale(rotation, faces);
+	number = faces.size();
+	for (int i = 0; i < 3; i++) {
+		transpose(rotation, rotation);
+		flip(rotation, rotation, 1);
+		classifier.detectMultiScale(rotation, faces);
+		number += faces.size();
+	}
+
+	return faces.size();
 }
