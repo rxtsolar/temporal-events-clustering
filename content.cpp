@@ -49,6 +49,63 @@ Mat getHistImage(const Mat& histogram)
 	return histImage;
 }
 
+Mat getDCTHist(const Mat& image)
+{
+}
+
+Mat getGistFeatures(const Mat& big)
+{
+	vector<Mat> channels;
+	int nScale = 3;
+	int nOrient = 8;
+	int nBlock = 4;
+	vector<double> features;
+	Mat image = big;
+
+	while (image.rows * image.cols > 500000)
+		pyrDown(image, image, Size(image.cols / 2, image.rows / 2));
+
+	int kSize = min(image.rows, image.cols) / 8;
+	int w = image.cols / nBlock;
+	int h = image.rows / nBlock;
+	double sigma;
+	double lambd;
+	double theta;
+	double gamma = 1.0;
+
+	split(image, channels);
+
+	for (int s = 0; s < nScale; s++) {
+		sigma = kSize * 0.12;
+		lambd = kSize * 0.05;
+		for (int o = 0; o < nOrient; o++) {
+			double theta = CV_PI * 2 * o / nOrient;
+			Mat kernel = getGaborKernel(Size(kSize, kSize),
+					sigma, theta, lambd, gamma);
+			Mat featureMap;
+
+			for (int c = 0; c < channels.size(); c++) {
+				filter2D(channels[c], featureMap, -1, kernel,
+						Point(-1, -1), 0, BORDER_REPLICATE);
+				for (int i = 0; i < nBlock; i++) {
+					for (int j = 0; j < nBlock; j++) {
+						Mat roi(featureMap, Rect(Point(i * w, j * h), Size(w, h)));
+						features.push_back(mean(roi)[0]);
+					}
+				}
+			}
+		}
+	}
+
+	//normalize(kernel, kernel, 0, 1.0, CV_MINMAX, CV_64F);
+	//kernel.convertTo(kernel, CV_8U, 255.0);
+
+	//imshow("kernel", kernel);
+	//waitKey(0); } kSize *= 0.7;
+
+	return Mat(features);
+}
+
 int countFaces(const Mat& image)
 {
 	vector<Rect> faces;
