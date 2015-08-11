@@ -23,10 +23,9 @@ static Mat getSimilarityMatrix(const Mat& features, double K, double thresh)
 	return S;
 }
 
-static Mat getLaplacianMatrix(const Mat& features, double K, double thresh)
+static Mat getLaplacianMatrix(const Mat& S)
 {
-	int n = features.rows;
-	Mat S = getSimilarityMatrix(features, K, thresh);
+	int n = S.rows;
 	Mat D(1, n, CV_64F, Scalar(0.0));
 	Mat L;
 
@@ -49,10 +48,11 @@ Mat spectralClustering(const Mat& features, double K, double thresh)
 	Mat labels;
 	Mat eigenValues;
 	Mat eigenVectors;
-	Mat laplacian = getLaplacianMatrix(features, K, thresh);
+	Mat S = getSimilarityMatrix(features, K, thresh);
+	Mat L = getLaplacianMatrix(S);
 	int k = 0;
 
-	eigen(laplacian, eigenValues, eigenVectors);
+	eigen(L, eigenValues, eigenVectors);
 	eigenVectors.convertTo(eigenVectors, CV_32F);
 
 	cerr << eigenValues << endl;
