@@ -10,7 +10,8 @@ label=2;
 
 #exiv2 -g Exif.Image.DateTime -Pv $1/* | sed "s/:/\n/g3; s/:/-/g; s/\n/:/g" | while read -r n d t; do echo -n "2" $(basename $n); echo -n " "; date +%s -d"$d $t"; done;
 
-for f in $(ls "$1"); do
+for file in $(ls $1/*.JPG); do
+	f=$(basename $file);
 	timestamp=$(exiv2 -g Exif.Image.DateTime -Pv "$1/$f" | sed "s/:/\n/g3; s/:/-/g; s/\n/:/g");
 	timestamp=$(date +%s -d "$timestamp");
 	orientation=$(exiv2 -g Exif.Image.Orientation -Pv "$1/$f");

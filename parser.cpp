@@ -42,6 +42,6 @@ void writeFile(const char* fileName, vector<PhotoInfo>& info)
 		os << info[i].name << ' ';
 		os << info[i].time << ' ';
 		os << info[i].orientation << ' ';
-		os << info[i].lens;
+		os << info[i].lens << endl;
 	}
 }
