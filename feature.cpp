@@ -95,7 +95,7 @@ Mat getTimeFeatures(const vector<PhotoInfo>& info)
 				scores = getNoveltyScores(info, K, size, sigma);
 				Mat f = getNeighbors(scores, 3);
 				if (features.empty())
-					features = f;
+					f.copyTo(features);
 				else
 					hconcat(features, f, features);
 			}
@@ -108,9 +108,11 @@ Mat getTimeFeatures(const vector<PhotoInfo>& info)
 
 Mat getLabels(const vector<PhotoInfo>& info)
 {
+	Mat result;
 	vector<int> labels;
 	for (int i = 0; i < info.size(); i++)
 		labels.push_back(info[i].label);
 
-	return Mat(labels);
+	Mat(labels).copyTo(result);
+	return result;
 }
