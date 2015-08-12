@@ -86,7 +86,7 @@ Mat getGistFeatures(const Mat& image)
 {
 	vector<Mat> channels;
 	int nScale = 3;
-	int nOrient = 8;
+	int nOrient = 4;
 	int nBlock = 2;
 	vector<double> features;
 	Mat result;
@@ -116,9 +116,9 @@ Mat getGistFeatures(const Mat& image)
 	for (int s = 0; s < nScale; s++) {
 		sigma = kSize * 0.12;
 		//lambd = kSize * 0.05;
-		lambd = kSize * 0.12;
+		lambd = kSize * 0.1;
 		for (int o = 0; o < nOrient; o++) {
-			double theta = CV_PI * 2 * o / nOrient;
+			double theta = CV_PI * o / nOrient;
 			Mat kernel = getGaborKernel(Size(kSize, kSize),
 					sigma, theta, lambd, gamma);
 			Mat featureMap;
