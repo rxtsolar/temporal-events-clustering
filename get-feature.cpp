@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
 
 	for (int i = 0; i < info.size(); i++) {
 		string full = path + info[i].name;
-		Mat image = imread(full, 1);
+		Mat image = imread(full, 0);
 
 		preprocess(image, info[i].orientation);
 	
@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
 		cout << info[i].name << ' ';
 		cout << features.rows;
 		for (int i = 0; i < features.rows; i++)
-			cout << ' ' << features.at<double>(i);
+			cout << ' ' << features.at<double>(i, 0);
 		cout << endl;
 	}
 

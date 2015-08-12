@@ -9,7 +9,7 @@
 using namespace std;
 using namespace cv;
 
-const int HIST_SIZE = 32;
+const int HIST_SIZE = 64;
 const int SMALL_WIDTH = 300;
 //const char* path = "model/haarcascade_frontalface_default.xml";
 const char* path = "model/lbpcascade_profileface.xml";
@@ -30,6 +30,8 @@ Mat getHistogram(const Mat& image)
 			vconcat(result, hist, result);
 	}
 
+	result.convertTo(result, CV_64F);
+	result /= image.rows * image.cols;
 	return result;
 }
 

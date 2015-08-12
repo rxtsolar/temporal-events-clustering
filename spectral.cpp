@@ -62,6 +62,9 @@ Mat spectralClustering(const Mat& features, double K, double thresh)
 			k++;
 	}
 
+	if (k == 0)
+		k = 1;
+
 	cerr << "k = " << k << endl;
 
 	eigenVectors = eigenVectors.rowRange(eigenVectors.rows - k, eigenVectors.rows).t();
