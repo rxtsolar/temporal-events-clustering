@@ -84,7 +84,7 @@ Mat getDCTHist(const Mat& image)
 
 Mat getGistFeatures(const Mat& image)
 {
-	vector<Mat> channels;
+	Mat gray;
 	int nScale = 3;
 	int nOrient = 4;
 	int nBlock = 2;
@@ -99,19 +99,9 @@ Mat getGistFeatures(const Mat& image)
 	double theta;
 	double gamma = 1.0;
 
-	split(image, channels);
+	cvtColor(image, gray, CV_BGR2GRAY);
 
-	//for (int c = 0; c < channels.size(); c++) {
-		//for (int i = 0; i < nBlock; i++) {
-			//for (int j = 0; j < nBlock; j++) {
-				//Mat roi(channels[c], Rect(Point(i * w, j * h), Size(w, h)));
-				//features.push_back(mean(roi)[0]);
-			//}
-		//}
-	//}
-
-	//for (int i = 0; i < channels.size(); i++)
-	//equalizeHist(channels[i], channels[i]);
+	equalizeHist(gray, gray);
 
 	for (int s = 0; s < nScale; s++) {
 		sigma = kSize * 0.12;
@@ -123,22 +113,13 @@ Mat getGistFeatures(const Mat& image)
 					sigma, theta, lambd, gamma);
 			Mat featureMap;
 
-			for (int c = 0; c < channels.size(); c++) {
-				filter2D(channels[c], featureMap, -1, kernel,
-						Point(-1, -1), 0, BORDER_REPLICATE);
+			filter2D(gray, featureMap, -1, kernel,
+					Point(-1, -1), 0, BORDER_REPLICATE);
 
-				//Mat show;
-				//normalize(featureMap, show, 0, 1.0, CV_MINMAX, CV_64F);
-				//show.convertTo(show, CV_8U, 255.0);
-				//imshow("kernel", show);
-				//imshow("image", channels[c]);
-				//waitKey(0);
-
-				for (int i = 0; i < nBlock; i++) {
-					for (int j = 0; j < nBlock; j++) {
-						Mat roi(featureMap, Rect(Point(i * w, j * h), Size(w, h)));
-						features.push_back(mean(roi)[0]);
-					}
+			for (int i = 0; i < nBlock; i++) {
+				for (int j = 0; j < nBlock; j++) {
+					Mat roi(featureMap, Rect(Point(i * w, j * h), Size(w, h)));
+					features.push_back(mean(roi)[0]);
 				}
 			}
 		}
