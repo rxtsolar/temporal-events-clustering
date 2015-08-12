@@ -26,12 +26,13 @@ int main(int argc, char* argv[])
 
 		preprocess(image, info[i].orientation);
 	
-		Mat gist = getGistFeatures(image);
+		//Mat features = getGistFeatures(image);
+		Mat features = getHistogram(image);
 
 		cout << info[i].name << ' ';
-		cout << gist.rows;
-		for (int i = 0; i < gist.rows; i++)
-			cout << ' ' << gist.at<double>(i);
+		cout << features.rows;
+		for (int i = 0; i < features.rows; i++)
+			cout << ' ' << features.at<double>(i);
 		cout << endl;
 	}
 

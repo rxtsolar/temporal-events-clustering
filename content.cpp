@@ -9,7 +9,7 @@
 using namespace std;
 using namespace cv;
 
-const int HIST_SIZE = 16;
+const int HIST_SIZE = 32;
 const int SMALL_WIDTH = 300;
 //const char* path = "model/haarcascade_frontalface_default.xml";
 const char* path = "model/lbpcascade_profileface.xml";
@@ -99,6 +99,9 @@ Mat getGistFeatures(const Mat& image)
 
 	split(image, channels);
 
+	for (int i = 0; i < channels.size(); i++)
+		equalizeHist(channels[i], channels[i]);
+
 	for (int s = 0; s < nScale; s++) {
 		sigma = kSize * 0.12;
 		lambd = kSize * 0.05;
@@ -136,7 +139,8 @@ void preprocess(Mat& image, int orientation)
 	int small = min(image.rows, image.cols);
 	double rate = static_cast<double>(SMALL_WIDTH) / small;
 
-	resize(image, image, Size(image.cols * rate, image.rows * rate));
+	resize(image, image, Size(image.cols * rate, image.rows * rate),
+			0, 0, INTER_CUBIC);
 
 	switch (orientation) {
 	case TOP:
