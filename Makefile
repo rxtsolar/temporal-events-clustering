@@ -1,7 +1,7 @@
 all:
 	#g++ -o show show.cpp -lopencv_core -lopencv_imgproc -lopencv_highgui
 	#g++ -o process cooper.cpp feature.cpp -lopencv_core -lopencv_imgproc -lopencv_highgui
-	#g++ -o train train.cpp feature.cpp -lopencv_core -lopencv_imgproc -lopencv_highgui -lopencv_ml
-	#g++ -o test test.cpp feature.cpp -lopencv_core -lopencv_imgproc -lopencv_highgui -lopencv_ml
-	g++ -o get-c-feature content.cpp get-feature.cpp `pkg-config opencv --libs`
-	g++ -o cluster cluster.cpp spectral.cpp `pkg-config opencv --libs`
+	g++ -o train train.cpp feature.cpp parser.cpp `pkg-config opencv --libs`
+	g++ -o test test.cpp feature.cpp parser.cpp `pkg-config opencv --libs`
+	#g++ -o get-c-feature content.cpp get-feature.cpp `pkg-config opencv --libs`
+	#g++ -o cluster cluster.cpp spectral.cpp `pkg-config opencv --libs`

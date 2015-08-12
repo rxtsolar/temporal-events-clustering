@@ -13,21 +13,35 @@ void parse(const string& line, PhotoInfo& info)
 	ss >> info.label >> info.name >> info.time >> info.orientation >> info.lens;
 }
 
-void parseFile(const char* fileName, vector<PhotoInfo>& result)
+void parseFile(const char* fileName, vector<PhotoInfo>& info)
 {
-	fstream file(fileName);
+	ifstream file(fileName);
 	if (!file)
 		return;
 
-	result.clear();
+	info.clear();
 
 	while (true) {
 		string line;
-		PhotoInfo info;
+		PhotoInfo i;
 		getline(file, line);
 		if (file.eof())
 			break;
-		parse(line, info);
-		result.push_back(info);
+		parse(line, i);
+		info.push_back(i);
+	}
+}
+
+void writeFile(const char* fileName, vector<PhotoInfo>& info)
+{
+	ofstream file(fileName);
+	ostream& os = file ? file : cout;
+
+	for (int i = 0; i < info.size(); i++) {
+		os << info[i].label << ' ';
+		os << info[i].name << ' ';
+		os << info[i].time << ' ';
+		os << info[i].orientation << ' ';
+		os << info[i].lens;
 	}
 }

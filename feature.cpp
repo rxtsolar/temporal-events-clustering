@@ -1,15 +1,16 @@
 #include "feature.h"
+#include "parser.h"
 
 using namespace std;
 using namespace cv;
 
-static Mat getSimilarityMatrix(const vector<int>& times, double K)
+static Mat getSimilarityMatrix(const vector<PhotoInfo>& info, double K)
 {
-	Mat S(times.size(), times.size(), CV_64F);
+	Mat S(info.size(), info.size(), CV_64F);
 
-	for (int i = 0; i < times.size(); i++) {
-		for (int j = 0; j < times.size(); j++) {
-			S.at<double>(j, i) = exp(-fabs(times[i] - times[j]) / K);
+	for (int i = 0; i < info.size(); i++) {
+		for (int j = 0; j < info.size(); j++) {
+			S.at<double>(j, i) = exp(-fabs(info[i].time - info[j].time) / K);
 		}
 	}
 
@@ -36,14 +37,14 @@ static Mat getKernel(int size, double sigma)
 	return kernel;
 }
 
-vector<double> getNoveltyScores(const vector<int>& times, double K,
+vector<double> getNoveltyScores(const vector<PhotoInfo>& info, double K,
 		int kernelSize, double kernelSigma)
 {
-	vector<double> scores(times.size());
-	Mat S = getSimilarityMatrix(times, K);
+	vector<double> scores(info.size());
+	Mat S = getSimilarityMatrix(info, K);
 	Mat kernel = getKernel(kernelSize, kernelSigma);
 
-	for (int i = 0; i < times.size(); i++) {
+	for (int i = 0; i < info.size(); i++) {
 		Mat roi(S, Rect(Point(i, i), Size(1, 1)));
 		Mat output;
 		filter2D(roi, output, -1, kernel, Point(-1, -1), 0, BORDER_REPLICATE);
@@ -74,7 +75,7 @@ static Mat getNeighbors(const vector<double>& scores, int n)
 	return features;
 }
 
-Mat getFeatures(const vector<int>& times)
+Mat getTimeFeatures(const vector<PhotoInfo>& info)
 {
 	int nK = 10;
 	int nSize = 4;
@@ -91,7 +92,7 @@ Mat getFeatures(const vector<int>& times)
 				K = 10000.0 * (1 + k);
 				size = 2 * (1 + sz);
 				sigma = 0.5 * sigma + 1;
-				scores = getNoveltyScores(times, K, size, sigma);
+				scores = getNoveltyScores(info, K, size, sigma);
 				Mat f = getNeighbors(scores, 3);
 				if (features.empty())
 					features = f;
@@ -103,4 +104,13 @@ Mat getFeatures(const vector<int>& times)
 	features.convertTo(features, CV_32F);
 
 	return features;
+}
+
+Mat getLabels(const vector<PhotoInfo>& info)
+{
+	vector<int> labels;
+	for (int i = 0; i < info.size(); i++)
+		labels.push_back(info[i].label);
+
+	return Mat(labels);
 }

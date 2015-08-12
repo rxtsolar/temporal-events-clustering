@@ -5,6 +5,7 @@
 #include <opencv2/opencv.hpp>
 
 #include "feature.h"
+#include "parser.h"
 
 using namespace std;
 using namespace cv;
@@ -16,37 +17,20 @@ int main(int argc, char* argv[])
 		return -1;
 	}
 
-	fstream file(argv[1]);
 	string model(argv[2]);
 
-	if (!file)
-		return -1;
+	vector<PhotoInfo> info;
+	parseFile(argv[1], info);
 
-	vector<int> labels;
-	vector<string> names;
-	vector<int> times;
-
-	while (true) {
-		int label;
-		string name;
-		int time;
-		file >> label >> name >> time;
-		if (file.eof())
-			break;
-		labels.push_back(label);
-		names.push_back(name);
-		times.push_back(time);
-	}
-
-	Mat testingData = getFeatures(times);
+	Mat testingData = getTimeFeatures(info);
 
 	CvSVM svm;
 	svm.load(model.c_str());
 
-	for (int i = 0; i < testingData.rows; i++) {
-		cout << svm.predict(testingData.row(i)) << ' ';
-		cout << names[i] << ' ' << times[i] << endl;
-	}
+	for (int i = 0; i < testingData.rows; i++)
+		info[i].label = svm.predict(testingData.row(i));
+
+	writeFile(0, info);
 
 	return 0;
 }

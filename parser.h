@@ -21,5 +21,6 @@ struct PhotoInfo {
 
 void parse(const std::string& line, PhotoInfo& info);
 void parseFile(const char* fileName, std::vector<PhotoInfo>& info);
+void writeFile(const char* fileName, std::vector<PhotoInfo>& info);
 
 #endif
