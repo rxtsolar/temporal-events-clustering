@@ -75,14 +75,14 @@ Mat spectralClustering(const Mat& features, double K, double thresh)
 
 	eigenVectors = eigenVectors.rowRange(eigenVectors.rows - k, eigenVectors.rows).t();
 
-	kmeans(eigenVectors, k, labels,
-			TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 1000, 1e-5),
-			2, KMEANS_RANDOM_CENTERS);
-	//Mat f;
-	//features.convertTo(f, CV_32F);
-	//kmeans(f, k, labels,
+	//kmeans(eigenVectors, k, labels,
 	//TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 1000, 1e-5),
 	//2, KMEANS_RANDOM_CENTERS);
+	Mat f;
+	features.convertTo(f, CV_32F);
+	kmeans(f, k, labels,
+			TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 1000, 1e-5),
+			2, KMEANS_RANDOM_CENTERS);
 
 	return labels;
 }

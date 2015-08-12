@@ -87,11 +87,11 @@ Mat getGistFeatures(const Mat& image)
 	vector<Mat> channels;
 	int nScale = 3;
 	int nOrient = 8;
-	int nBlock = 4;
+	int nBlock = 2;
 	vector<double> features;
 	Mat result;
 
-	int kSize = min(image.rows, image.cols) / 8;
+	int kSize = min(image.rows, image.cols) / 4;
 	int w = image.cols / nBlock;
 	int h = image.rows / nBlock;
 	double sigma;
@@ -101,12 +101,22 @@ Mat getGistFeatures(const Mat& image)
 
 	split(image, channels);
 
-	for (int i = 0; i < channels.size(); i++)
-		equalizeHist(channels[i], channels[i]);
+	//for (int c = 0; c < channels.size(); c++) {
+		//for (int i = 0; i < nBlock; i++) {
+			//for (int j = 0; j < nBlock; j++) {
+				//Mat roi(channels[c], Rect(Point(i * w, j * h), Size(w, h)));
+				//features.push_back(mean(roi)[0]);
+			//}
+		//}
+	//}
+
+	//for (int i = 0; i < channels.size(); i++)
+	//equalizeHist(channels[i], channels[i]);
 
 	for (int s = 0; s < nScale; s++) {
 		sigma = kSize * 0.12;
-		lambd = kSize * 0.05;
+		//lambd = kSize * 0.05;
+		lambd = kSize * 0.12;
 		for (int o = 0; o < nOrient; o++) {
 			double theta = CV_PI * 2 * o / nOrient;
 			Mat kernel = getGaborKernel(Size(kSize, kSize),
@@ -116,6 +126,14 @@ Mat getGistFeatures(const Mat& image)
 			for (int c = 0; c < channels.size(); c++) {
 				filter2D(channels[c], featureMap, -1, kernel,
 						Point(-1, -1), 0, BORDER_REPLICATE);
+
+				//Mat show;
+				//normalize(featureMap, show, 0, 1.0, CV_MINMAX, CV_64F);
+				//show.convertTo(show, CV_8U, 255.0);
+				//imshow("kernel", show);
+				//imshow("image", channels[c]);
+				//waitKey(0);
+
 				for (int i = 0; i < nBlock; i++) {
 					for (int j = 0; j < nBlock; j++) {
 						Mat roi(featureMap, Rect(Point(i * w, j * h), Size(w, h)));
@@ -124,16 +142,26 @@ Mat getGistFeatures(const Mat& image)
 				}
 			}
 		}
+		kSize *= 0.7;
 	}
-
-	//normalize(kernel, kernel, 0, 1.0, CV_MINMAX, CV_64F);
-	//kernel.convertTo(kernel, CV_8U, 255.0);
-
-	//imshow("kernel", kernel);
-	//waitKey(0); } kSize *= 0.7;
 
 	Mat(features).copyTo(result);
 	return result;
+}
+
+Mat blendFeatures(const vector<Mat>& features, const vector<double>& rates)
+{
+	Mat blend;
+	double sum = 0.0;
+	for (int i = 0; i < features.size(); i++) {
+		if (blend.empty())
+			blend = features[i] * rates[i];
+		else
+			vconcat(blend, features[i] * rates[i], blend);
+		sum += rates[i];
+	}
+	blend /= sum;
+	return blend;
 }
 
 void preprocess(Mat& image, int orientation)
@@ -141,8 +169,7 @@ void preprocess(Mat& image, int orientation)
 	int small = min(image.rows, image.cols);
 	double rate = static_cast<double>(SMALL_WIDTH) / small;
 
-	resize(image, image, Size(image.cols * rate, image.rows * rate),
-			0, 0, INTER_CUBIC);
+	resize(image, image, Size(image.cols * rate, image.rows * rate));
 
 	switch (orientation) {
 	case TOP:

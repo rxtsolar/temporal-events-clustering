@@ -14,6 +14,8 @@ cv::Mat getHistogram(const cv::Mat& image);
 cv::Mat getHistImage(const cv::Mat& histogram);
 cv::Mat getDCTHist(const cv::Mat& image);
 cv::Mat getGistFeatures(const cv::Mat& image);
+cv::Mat blendFeatures(const std::vector<cv::Mat>& features,
+		const std::vector<double>& rates);
 
 void preprocess(cv::Mat& image, int orientation);
 
