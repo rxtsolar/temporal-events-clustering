@@ -8,7 +8,8 @@
 using namespace std;
 using namespace cv;
 
-int histSize = 16;
+const int HIST_SIZE = 16;
+const int SMALL_WIDTH = 300;
 //const char* path = "model/haarcascade_frontalface_default.xml";
 const char* path = "model/lbpcascade_profileface.xml";
 
@@ -21,7 +22,7 @@ Mat getHistogram(const Mat& image)
 	split(image, channels);
 
 	for (int i = 0; i < channels.size(); i++) {
-		calcHist(&channels[i], 1, 0, Mat(), hist, 1, &histSize, 0);
+		calcHist(&channels[i], 1, 0, Mat(), hist, 1, &HIST_SIZE, 0);
 		if (result.empty())
 			hist.copyTo(result);
 		else
@@ -133,6 +134,32 @@ Mat getGistFeatures(const Mat& big)
 	//waitKey(0); } kSize *= 0.7;
 
 	return Mat(features);
+}
+
+void preprocess(Mat& image, Orientation orientation)
+{
+	int small = min(image.rows, image.cols);
+	double rate = static_cast<double>(SMALL_WIDTH) / small;
+
+	resize(image, image, Size(image.cols * rate, image.rows * rate));
+
+	switch (orientation) {
+	case TOP:
+		transpose(image, image);
+		flip(image, image, 1);
+		break;
+	case BOTTOM:
+		transpose(image, image);
+		flip(image, image, 0);
+		break;
+	case LEFT:
+		break;
+	case RIGHT:
+		flip(image, image, -1);
+		break;
+	default:
+		break;
+	}
 }
 
 int countFaces(const Mat& image)
