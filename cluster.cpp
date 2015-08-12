@@ -21,15 +21,23 @@ int main(int argc, char* argv[])
 	Mat features;
 	Mat labels;
 
+	int m;
+	int n;
+
 	while (true) {
 		string name;
-		int n;
 		double f;
 		vector<double> feature;
 
-		file >> name >> n;
+		file >> name;
 		if (file.eof())
 			break;
+		file >> m >> n;
+
+		for (int i = 0; i < m; i++) {
+			file >> f;
+			feature.push_back(f);
+		}
 		for (int i = 0; i < n; i++) {
 			file >> f;
 			feature.push_back(f);
@@ -42,7 +50,7 @@ int main(int argc, char* argv[])
 			vconcat(features, Mat(feature).t(), features);
 	}
 
-	labels = spectralClustering(features, atof(argv[2]), atof(argv[3]));
+	labels = spectralClustering(features, m, n, atof(argv[2]), atof(argv[3]));
 	//labels = spectralClustering(features, 40, 0.000001);
 
 	for (int i = 0; i < names.size(); i++)

@@ -6,18 +6,22 @@ using namespace cv;
 const int MIN_NUM_EVENTS = 3;
 const int MAX_NUM_EVENTS = 30;
 
-static Mat getSimilarityMatrix(const Mat& features, double K, double thresh)
+static Mat getSimilarityMatrix(const Mat& features,
+		int n1, int n2, double r1, double r2)
 {
 	int n = features.rows;
 	Mat S(n, n, CV_64F, Scalar(0.0));
-	
+
+	Mat feature1 = features.colRange(0, n1);
+	Mat feature2 = features.colRange(n1, n1 + n2);
+
 	for (int i = 0; i < n; i++) {
 		for (int j = 0; j < n; j++) {
-			double d = norm(features.row(i) - features.row(j));
-			d = exp(-d / K);
-			if (d < thresh)
-				d = 0;
-			S.at<double>(i, j) = d;
+			double d1 = norm(feature1.row(i) - feature1.row(j));
+			double d2 = norm(feature2.row(i) - feature2.row(j));
+			d1 = exp(-d1 / r1);
+			d2 = exp(-d2 / r2);
+			S.at<double>(i, j) = max(d1, d2);
 		}
 	}
 
@@ -46,12 +50,13 @@ static Mat getLaplacianMatrix(const Mat& S)
 	return L;
 }
 
-Mat spectralClustering(const Mat& features, double K, double thresh)
+Mat spectralClustering(const Mat& features,
+		int n1, int n2, double r1, double r2)
 {
 	Mat labels;
 	Mat eigenValues;
 	Mat eigenVectors;
-	Mat S = getSimilarityMatrix(features, K, thresh);
+	Mat S = getSimilarityMatrix(features, n1, n2, r1, r2);
 	Mat L = getLaplacianMatrix(S);
 	int n = features.rows;
 	int k = 0;

@@ -19,7 +19,8 @@ cv::Mat blendFeatures(const std::vector<cv::Mat>& features,
 
 void preprocess(cv::Mat& image, int orientation);
 
-cv::Mat spectralClustering(const cv::Mat& features, double K, double thresh);
+cv::Mat spectralClustering(const cv::Mat& features,
+		int n1, int n2, double r1, double r2);
 int countFaces(const cv::Mat& image);
 
 #endif
