@@ -4,6 +4,7 @@
 #include <opencv2/opencv.hpp>
 
 #include "feature.h"
+#include "parser.h"
 
 using namespace std;
 using namespace cv;
@@ -50,18 +51,14 @@ Mat getHistImage(const Mat& histogram)
 	return histImage;
 }
 
-Mat getDCTHist(const Mat& big)
+Mat getDCTHist(const Mat& image)
 {
 	vector<Mat> channels;
 	int bSize = 8;
-	int w = big.cols / bSize;
-	int h = big.rows / bSize;
+	int w = image.cols / bSize;
+	int h = image.rows / bSize;
 	vector<double> features(bSize * bSize * channels.size(), 0.0);
-	Mat image = big;
 	Mat result;
-
-	while (image.rows * image.cols > 500000)
-		pyrDown(image, image, Size(image.cols / 2, image.rows / 2));
 
 	split(image, channels);
 
@@ -78,22 +75,19 @@ Mat getDCTHist(const Mat& big)
 		}
 	}
 
-	result = Mat(features);
+	Mat(features).copyTo(result);
 	result /= w * h;
 	return result;
 }
 
-Mat getGistFeatures(const Mat& big)
+Mat getGistFeatures(const Mat& image)
 {
 	vector<Mat> channels;
 	int nScale = 3;
 	int nOrient = 8;
 	int nBlock = 4;
 	vector<double> features;
-	Mat image = big;
-
-	while (image.rows * image.cols > 500000)
-		pyrDown(image, image, Size(image.cols / 2, image.rows / 2));
+	Mat result;
 
 	int kSize = min(image.rows, image.cols) / 8;
 	int w = image.cols / nBlock;
@@ -133,10 +127,11 @@ Mat getGistFeatures(const Mat& big)
 	//imshow("kernel", kernel);
 	//waitKey(0); } kSize *= 0.7;
 
-	return Mat(features);
+	Mat(features).copyTo(result);
+	return result;
 }
 
-void preprocess(Mat& image, Orientation orientation)
+void preprocess(Mat& image, int orientation)
 {
 	int small = min(image.rows, image.cols);
 	double rate = static_cast<double>(SMALL_WIDTH) / small;

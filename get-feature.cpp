@@ -4,33 +4,36 @@
 #include <opencv2/opencv.hpp>
 
 #include "feature.h"
+#include "parser.h"
 
 using namespace std;
 using namespace cv;
 
 int main(int argc, char* argv[])
 {
-	if (argc < 2) {
-		cerr << "usage: " << argv[0] << " <input-image>" << endl;
+	if (argc < 3) {
+		cerr << "usage: " << argv[0] << " <input-data> <path-to-photo>" << endl;
 		return -1;
 	}
 
-	Mat image = imread(argv[1], 1);
+	vector<PhotoInfo> info;
+	string path(argv[2]);
+	parseFile(argv[1], info);
 
-	//pyrDown(image, image, Size(image.cols / 2, image.rows / 2));
+	for (int i = 0; i < info.size(); i++) {
+		string full = path + info[i].name;
+		Mat image = imread(full, 1);
+
+		preprocess(image, info[i].orientation);
 	
-	Mat gist = getGistFeatures(image);
+		Mat gist = getGistFeatures(image);
 
-	cout << gist.rows;
-	for (int i = 0; i < gist.rows; i++)
-		cout << ' ' << gist.at<double>(i);
-	cout << endl;
+		cout << info[i].name << ' ';
+		cout << gist.rows;
+		for (int i = 0; i < gist.rows; i++)
+			cout << ' ' << gist.at<double>(i);
+		cout << endl;
+	}
 
-	//Mat hist = getHistogram(image);
-	//hist = hist / (image.rows * image.cols);
-	//cout << hist.rows;
-	//for (int i = 0; i < hist.rows; i++)
-		//cout << ' ' << hist.at<float>(i);
-	//cout << endl;
 	return 0;
 }
