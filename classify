@@ -11,7 +11,7 @@ class=0;
 mkdir -p output;
 
 ./parse "$1" | sort -k3 -n > "output/data_$$";
-./test "output/data_$$" "model/model.xml" > "output/result_$$";
+./test "output/data_$$" "model/time.xml" > "output/result_$$";
 cat "output/result_$$" | while read -r l n t o le; do
 	if [ $l -eq 1 ]; then
 		class=$(($class + 1));
