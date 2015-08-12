@@ -21,7 +21,7 @@ int main(int argc, char* argv[])
 	parseFile(argv[1], info);
 
 	for (int i = 0; i < info.size(); i++) {
-		string full = path + info[i].name;
+		string full = path + string(1, '/') + info[i].name;
 		Mat image = imread(full, 1);
 
 		preprocess(image, info[i].orientation);
