@@ -3,6 +3,9 @@
 using namespace std;
 using namespace cv;
 
+const int MIN_NUM_EVENTS = 3;
+const int MAX_NUM_EVENTS = 30;
+
 static Mat getSimilarityMatrix(const Mat& features, double K, double thresh)
 {
 	int n = features.rows;
@@ -50,6 +53,7 @@ Mat spectralClustering(const Mat& features, double K, double thresh)
 	Mat eigenVectors;
 	Mat S = getSimilarityMatrix(features, K, thresh);
 	Mat L = getLaplacianMatrix(S);
+	int n = features.rows;
 	int k = 0;
 
 	eigen(L, eigenValues, eigenVectors);
@@ -62,6 +66,8 @@ Mat spectralClustering(const Mat& features, double K, double thresh)
 			k++;
 	}
 
+	if (k < n / MAX_NUM_EVENTS)
+		k = n / MAX_NUM_EVENTS;
 	if (k == 0)
 		k = 1;
 
@@ -72,6 +78,11 @@ Mat spectralClustering(const Mat& features, double K, double thresh)
 	kmeans(eigenVectors, k, labels,
 			TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 1000, 1e-5),
 			2, KMEANS_RANDOM_CENTERS);
+	//Mat f;
+	//features.convertTo(f, CV_32F);
+	//kmeans(f, k, labels,
+	//TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 1000, 1e-5),
+	//2, KMEANS_RANDOM_CENTERS);
 
 	return labels;
 }
