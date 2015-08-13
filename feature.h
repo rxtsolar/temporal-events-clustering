@@ -20,6 +20,6 @@ cv::Mat blendFeatures(const std::vector<cv::Mat>& features,
 void preprocess(cv::Mat& image, int orientation);
 
 cv::Mat spectralClustering(const cv::Mat& features,
-		int n1, int n2, double r1, double r2);
+		const std::vector<int>& nFeatures, const std::vector<double>& rates);
 
 #endif
