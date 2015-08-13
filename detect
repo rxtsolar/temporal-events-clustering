@@ -1,0 +1,10 @@
+#!/bin/bash
+
+[ "$1" == '' ] && echo "usage: $0 <input-dir>" && exit;
+
+mkdir -p output;
+
+./parse "$1" | sort -k3 -n > "output/data_$$";
+./main "output/data_$$" > "output/clustered_$$";
+chmod +x "output/clustered_$$";
+exec "output/clustered_$$";

@@ -10,8 +10,8 @@
 using namespace std;
 using namespace cv;
 
-const double GIST_SIGMA = 10.0;
-const double COLOR_SIGMA = 0.015;
+const double GIST_SIGMA = 5.0;
+const double COLOR_SIGMA = 0.008;
 
 const char* modelName = "model/time.xml";
 
@@ -90,12 +90,14 @@ int main(int argc, char* argv[])
 		}
 	}
 
+	cout << "#!/bin/bash" << endl << endl;
 	for (int i = 0; i < events.size(); i++) {
+		cout << "mkdir -p events/event" << i << ";" << endl;
+		cout << "cp";
 		for (int j = 0; j < events[i].size(); j++) {
-			cout << i << ' ' << events[i].size();
 			cout << ' ' << events[i][j].name;
 		}
-		cout << endl;
+		cout << " events/event" << i << ";" << endl;
 	}
 
 	return 0;
