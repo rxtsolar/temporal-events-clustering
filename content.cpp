@@ -11,8 +11,6 @@ using namespace cv;
 
 const int HIST_SIZE = 64;
 const int SMALL_WIDTH = 300;
-//const char* path = "model/haarcascade_frontalface_default.xml";
-const char* path = "model/lbpcascade_profileface.xml";
 
 Mat getHistogram(const Mat& image)
 {
@@ -169,28 +167,4 @@ void preprocess(Mat& image, int orientation)
 	default:
 		break;
 	}
-}
-
-int countFaces(const Mat& image)
-{
-	vector<Rect> faces;
-	Mat rotation;
-	int number = 0;
-
-	CascadeClassifier classifier;
-	classifier.load(path);
-
-	cvtColor(image, rotation, CV_BGR2GRAY);
-	equalizeHist(rotation, rotation);
-
-	classifier.detectMultiScale(rotation, faces);
-	number = faces.size();
-	for (int i = 0; i < 3; i++) {
-		transpose(rotation, rotation);
-		flip(rotation, rotation, 1);
-		classifier.detectMultiScale(rotation, faces);
-		number += faces.size();
-	}
-
-	return faces.size();
 }
