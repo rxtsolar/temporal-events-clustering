@@ -66,7 +66,7 @@ int main(int argc, char* argv[])
 			Mat color = getHistogram(image);
 
 			if (features.empty()) {
-				hconcat(gist.t(), color.t(), feautres);
+				hconcat(gist.t(), color.t(), features);
 				nFeatures.push_back(gist.rows);
 				nFeatures.push_back(color.rows);
 			} else {
@@ -78,8 +78,8 @@ int main(int argc, char* argv[])
 
 		labels = spectralClustering(features, nFeatures, rates);
 
-		for (int j = 0; j < labels.size(); j++) {
-			cluster[label[j]].push_back(timeGroups[i][j]);
+		for (int j = 0; j < labels.rows; j++) {
+			cluster[labels.at<int>(j)].push_back(timeGroups[i][j]);
 		}
 
 		for (map<int, vector<PhotoInfo> >::const_iterator it = cluster.begin();
@@ -97,11 +97,6 @@ int main(int argc, char* argv[])
 		}
 		cout << endl;
 	}
-
-	//cout << timeGroups.size() << endl;
-	//for (int i = 0; i < timeGroups.size(); i++) {
-		//cout << "    " << timeGroups[i].size() << endl;
-	//}
 
 	return 0;
 }

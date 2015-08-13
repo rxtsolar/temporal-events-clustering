@@ -22,4 +22,12 @@ void preprocess(cv::Mat& image, int orientation);
 cv::Mat spectralClustering(const cv::Mat& features,
 		const std::vector<int>& nFeatures, const std::vector<double>& rates);
 
+extern const int HIST_SIZE;
+extern const int SMALL_WIDTH;
+extern const int MIN_NUM_EVENTS;
+extern const int MAX_NUM_EVENTS;
+extern const double GIST_SIGMA;
+extern const double COLOR_SIGMA;
+extern const char* modelName;
+
 #endif
